@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const program = require('commander');
 const fse = require("fs-extra");
 const path = require("path");
@@ -14,8 +13,8 @@ const packageJson = (start) => {
 	}
 }
 
-
 program
+	.option('-o, --out-dir <dir>', 'output folder [build]', 'build')
 	.option('-s, --src <dir>', 'source folder [src]', 'src')
 	.option('-m, --main <main>', 'name of the main script inside src [index.js]', 'index.js')
 	.option('-b, --bundle <bundle>', 'bundle identifier [my.proton.application]', 'my.proton.application')
@@ -30,6 +29,7 @@ program
 
 		require("./mac")({
 			app,
+			outDir: program.outDir,
 			bundleId: program.bundle,
 			src: program.src,
 			main: program.main,

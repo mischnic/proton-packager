@@ -5,10 +5,11 @@ const cmd = require("command-exists");
 const { downloadNode } = require("./utils")
 const { execSync } = require("child_process");
 
-
 module.exports = async (options)=>{
-	const app = options.app+".app";
-	write("Packaging into "+app+" (src dir: '"+options.src+"', main: '"+options.main+"') ");
+	const app = (options.outDir ? options.outDir+"/" : "")+options.app+".app";
+	write("Packaging into "+options.app+".app (src dir: '"+options.src+"', main: '"+options.main+"') ");
+
+	fse.ensureDirSync(options.outDir);
 
 	if(options.override && fse.existsSync(app)){
 		write("\nDeleting old package ")
@@ -25,7 +26,7 @@ module.exports = async (options)=>{
 
 	const node_path = await downloadNode(process.env.HOME+'/.proton/', /node-v[0-9]+.[0-9]+.[0-9]+-darwin-x64.tar.gz/, ".tar.gz")
 
-	write("\nCopying node into "+app+" ");
+	write("\nCopying node into "+options.app+".app ");
 	fse.copyFileSync(node_path, app+"/Contents/MacOS/node");
 
 	write("\nWriting Info.plist ")
@@ -60,7 +61,7 @@ DIR=$(dirname "$0")\n\
 	write("\nCopying application files ");
 	fse.copySync(options.icon, app+"/Contents/Resources/Icon.icns");
 	fse.readdirSync('.').forEach(file => {
-		if(file.indexOf(app) == -1){
+		if(options.outDir ? file.indexOf(options.outDir) == -1 : file.indexOf(app) == -1){
 			write(".");
 			if(file == "node_modules"){
 				fse.readdirSync("node_modules").forEach(module => {
