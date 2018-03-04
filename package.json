@@ -1,0 +1,21 @@
+{
+	"name": "proton-packager",
+	"version": "0.1.0",
+	"license": "MIT",
+	"main": "src/index.js",
+	"bin": {
+		"proton-packager": "src/index.js"
+	},
+	"repository": "github:mischnic/proton-packager",
+	"bugs": { 
+		"url" : "https://github.com/mischnic/proton-packager/issues"
+	},
+	"dependencies": {
+		"babel-core": "^6.26.0",
+		"command-exists": "^1.2.2",
+		"decompress": "^4.2.0",
+		"fs-extra": "^5.0.0",
+		"request": "^2.83.0",
+		"request-promise-native": "^1.0.5"
+	}
+}
