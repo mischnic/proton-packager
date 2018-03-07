@@ -32,7 +32,7 @@ or add a script to your `package.json`:
 
   Commands:
 
-    mac <AppName>
+    mac <AppName>  create a macOS .app bundle
 
   Options:
 
@@ -43,6 +43,7 @@ or add a script to your `package.json`:
     -b, --bundle <bundle>  bundle identifier [my.proton.application]
     -i, --icon <icon>      icns file to use as app icon
     -v, --version <ver>    version of the app [package.json: version]
+    --no-transpile         don't transpile source files using babel
     -f, --force            overwrite old package
 
 ```

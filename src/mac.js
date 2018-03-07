@@ -80,20 +80,22 @@ DIR=$(dirname "$0")\n\
 	});
 
 
-	write("\nTranspiling source files ");
-	const srcRegex = /\.jsx?$/;
+	if(options.transpile) {
+		write("\nTranspiling source files ");
+		const srcRegex = /\.jsx?$/;
 
-	const filterFn = item => item.path.indexOf('node_modules') < 0 && item.path.indexOf('.git') < 0
+		const filterFn = item => item.path.indexOf('node_modules') < 0 && item.path.indexOf('.git') < 0
 
-	const babelPath = path.join(process.cwd(), app, "Contents", "Resources", "app");
-	klawSync(path.join(app, "Contents", "Resources", "app", options.src), { filter: filterFn, noRecurseOnFailedFilter: true })
-		.forEach(f=> {
-			const fp = f.path;
-			if(f.stats.isFile() && srcRegex.test(fp)){
-				write("\n\t"+path.relative(babelPath, fp));
-				fse.writeFileSync(fp, babel.transformFileSync(fp, {ast: false}).code);
-			}
-		});
+		const babelPath = path.join(process.cwd(), app, "Contents", "Resources", "app");
+		klawSync(path.join(app, "Contents", "Resources", "app", options.src), { filter: filterFn, noRecurseOnFailedFilter: true })
+			.forEach(f=> {
+				const fp = f.path;
+				if(f.stats.isFile() && srcRegex.test(fp)){
+					write("\n\t"+path.relative(babelPath, fp));
+					fse.writeFileSync(fp, babel.transformFileSync(fp, {ast: false}).code);
+				}
+			});
+	}
 
 
 	// DOESN'T WORK! (yarn deletes native bindings)

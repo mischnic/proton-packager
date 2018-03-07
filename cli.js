@@ -18,16 +18,17 @@ program
 	.option('-s, --src <dir>', 'source folder [src]', 'src')
 	.option('-m, --main <main>', 'name of the main script inside src [index.js]', 'index.js')
 	.option('-b, --bundle <bundle>', 'bundle identifier [my.proton.application]', 'my.proton.application')
-	.option('-i, --icon <icon>', 'icns file to use as app icon', path.dirname(__dirname) + "/Icon.icns")
+	.option('-i, --icon <icon>', 'icns file to use as app icon', __dirname + "/Icon.icns")
 	.option('-v, --version <ver>', 'version of the app [package.json: version]')
+	.option('--no-transpile', 'don\'t transpile source files using babel')
 	.option('-f, --force', 'overwrite old package')
-	.command('mac <AppName>')
+	.command('mac <AppName>').description("create a macOS .app bundle")
 	.action((app, cmd)=>{
 		const version = typeof program.version === "function" ? 
 							(packageJson(process.cwd()+"/"+program.src) || {version:"0.0.0"}).version
 						  : program.version;
 
-		require("./mac")({
+		require("./src/mac")({
 			app,
 			outDir: program.outDir,
 			bundleId: program.bundle,
@@ -35,6 +36,7 @@ program
 			main: program.main,
 			icon: program.icon,
 			override: program.force,
+			transpile: program.transpile
 		})
 	})
 
