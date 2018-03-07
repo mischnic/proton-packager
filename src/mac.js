@@ -13,9 +13,14 @@ module.exports = async (options)=>{
 
 	fse.ensureDirSync(options.outDir);
 
-	if(options.override && fse.existsSync(app)){
-		write("\nDeleting old package ")
-		fse.removeSync(app);
+	if(fse.existsSync(app)){
+		if(options.override){
+			write("\nDeleting old package ")
+			fse.removeSync(app);
+		} else {
+			write("\nNot overwriting " + app+"\n")
+			return 1
+		}
 	}
 
 	write("\nCreating folder structure ");
