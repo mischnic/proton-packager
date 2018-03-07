@@ -1,8 +1,10 @@
 const write = process.stdout.write.bind(process.stdout);
 const fse = require("fs-extra");
+const path = require("path");
 const babel = require("babel-core");
 const cmd = require("command-exists");
-const { downloadNode } = require("./utils")
+const klawSync = require('klaw-sync');
+const { downloadNode } = require("./utils");
 const { execSync } = require("child_process");
 
 module.exports = async (options)=>{
@@ -67,7 +69,7 @@ DIR=$(dirname "$0")\n\
 				fse.readdirSync("node_modules").forEach(module => {
 					const options = {};
 					if(module == "libui-node"){
-						options.filter = (src, dest) => src.indexOf("libui-node/build/Release") == -1
+						options.filter = (src, dest) => src.indexOf("libui-node/build/Release/obj.target") == -1
 					}
 					fse.copySync("node_modules/"+module, app+"/Contents/Resources/app/node_modules/"+module, options)			
 				});
@@ -79,13 +81,22 @@ DIR=$(dirname "$0")\n\
 
 
 	write("\nTranspiling source files ");
-	fse.readdirSync(app+"/Contents/Resources/app/"+options.src).forEach(file => {
-		write("\n\t"+options.src+"/"+file);
-		fse.writeFileSync(app+"/Contents/Resources/app/"+options.src+"/"+file,
-						 babel.transformFileSync(app+"/Contents/Resources/app/"+options.src+"/"+file, {ast: false}).code)
-	});
+	const srcRegex = /\.jsx?$/;
 
-	// DOESN'T WORK!
+	const filterFn = item => item.path.indexOf('node_modules') < 0 && item.path.indexOf('.git') < 0
+
+	const babelPath = path.join(process.cwd(), app, "Contents", "Resources", "app");
+	klawSync(path.join(app, "Contents", "Resources", "app", options.src), { filter: filterFn, noRecurseOnFailedFilter: true })
+		.forEach(f=> {
+			const fp = f.path;
+			if(f.stats.isFile() && srcRegex.test(fp)){
+				write("\n\t"+path.relative(babelPath, fp));
+				fse.writeFileSync(fp, babel.transformFileSync(fp, {ast: false}).code);
+			}
+		});
+
+
+	// DOESN'T WORK! (yarn deletes native bindings)
 	// write("\nPruning dependencies\n");
 	// const o = execSync(
 	// 	cmd("yarn") ? "yarn install --silent --production --ignore-scripts --prefer-offline"
@@ -94,4 +105,5 @@ DIR=$(dirname "$0")\n\
 	// );
 	// console.log(o.toString());
 
+	write("\n");
 };
