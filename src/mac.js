@@ -71,7 +71,7 @@ DIR=$(dirname "$0")\n\
 					if(module == "libui-node"){
 						options.filter = (src, dest) => src.indexOf("libui-node/build/Release/obj.target") == -1
 					}
-					fse.copySync("node_modules/"+module, app+"/Contents/Resources/app/node_modules/"+module, options)			
+					fse.copySync("node_modules/"+module, app+"/Contents/Resources/app/node_modules/"+module, options);
 				});
 			} else {
 				fse.copySync(file, app+"/Contents/Resources/app/"+file);
@@ -84,7 +84,7 @@ DIR=$(dirname "$0")\n\
 		write("\nTranspiling source files ");
 		const srcRegex = /\.jsx?$/;
 
-		const filterFn = item => item.path.indexOf('node_modules') < 0 && item.path.indexOf('.git') < 0
+		const filterFn = item => item.path.indexOf('node_modules') < 0 && item.path.indexOf('.git') < 0;
 
 		const babelPath = path.join(process.cwd(), app, "Contents", "Resources", "app");
 		klawSync(path.join(app, "Contents", "Resources", "app", options.src), { filter: filterFn, noRecurseOnFailedFilter: true })
